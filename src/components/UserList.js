@@ -1,8 +1,7 @@
-// UserList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-import UserProfile from './UserProfile'; // Import the new component
+import loader from '../loader/loadergif.gif'
+import UserProfile from './UserProfile';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -10,11 +9,12 @@ const UserList = () => {
     const [showUserList, setShowUserList] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [showClickMessage, setShowClickMessage] = useState(true);
+    const [imageLoading, setImageLoading] = useState(true);
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('https://602e7c2c4410730017c50b9d.mockapi.io/users?limit=10');
+                const response = await axios.get('https://602e7c2c4410730017c50b9d.mockapi.io/users?');
                 setUsers(response.data);
                 setLoading(false);
                 console.log(response.data)
@@ -35,19 +35,27 @@ const UserList = () => {
     const handleUserClick = (user) => {
         setSelectedUser(user);
         setShowClickMessage(false);
+        setImageLoading(true);
     };
 
+    const handleImageLoaded = () => {
+        setImageLoading(false);
+    };
+
+    const handleImageError = () => {
+        setImageLoading(false);
+    };
     return (
         <div className="container  mt-4 text-white" >
             <div className='container p-2 text-center' style={{ backgroundColor: 'black', border: '2px solid', borderTopLeftRadius: '20px', borderTopRightRadius: '20px' }}>
                 <div onClick={toggleUserList} style={{ cursor: 'pointer' }} className='h2 mx-auto'>User List</div>
             </div>
             {showClickMessage && (
-                <div className='text-center  'style={{marginTop:'50px'}} >
+                <div className='text-center  ' style={{ marginTop: '50px' }} >
 
-                <div style={{color:'black'}} className='p-3 '>
-                    <p>Click on User List Please!</p>
-                </div>
+                    <div style={{ color: 'black' }} className='p-3 '>
+                        <p>Click on User List Please!</p>
+                    </div>
                 </div>
             )}
             {showUserList && (
@@ -56,7 +64,7 @@ const UserList = () => {
                         <ul className="list-group " >
                             {loading && <p>Loading...</p>}
                             {!loading && users.length === 0 && <p>No data to show</p>}
-                            {!loading && users.slice(11, 21).map(user => (
+                            {!loading && users.slice(1, 11).map(user => (
                                 <li
                                     key={user.id}
                                     className={`list-group-item shadow ${selectedUser === user ? 'active' : ''}`}
@@ -64,7 +72,14 @@ const UserList = () => {
                                     style={{ cursor: 'pointer', backgroundColor: 'black', color: 'white', marginBottom: '4px', borderRadius: '6px' }}
                                 >
                                     <div className="d-flex align-items-center ">
-                                        <img src={user.avatar} alt={user.profile.username} className="mr-3 rounded-circle shadow bg-white" style={{ width: '50px', height: '50px' }} />
+                                        <img
+                                            src={imageLoading ? loader : user.avatar}
+                                            alt={user.profile.username}
+                                            className="mr-3 rounded-circle shadow bg-white"
+                                            style={{ width: '50px', height: '50px' }}
+                                            onError={handleImageError} 
+                                            onLoad={() => setImageLoading(false)}
+                                        />
                                         <div>
                                             <div style={{ marginLeft: '20px' }}>
                                                 <div className='h4'>{user.profile.username}</div>
@@ -76,14 +91,14 @@ const UserList = () => {
                         </ul>
                     </div>
                     <div className="col-md-6 text-center">
-                    {selectedUser ? (
+                        {selectedUser ? (
                             <UserProfile user={selectedUser} />
                         ) : (
-                            <div className='text-center  rounded'style={{marginTop:'50px'}} >
+                            <div className='text-center  rounded' style={{ marginTop: '50px' }} >
 
-                            <div style={{color:'black'}} className='p-3 shadow'>
-                                <p>No user is selected yet...</p>
-                            </div>
+                                <div style={{ color: 'black' }} className='p-3 shadow'>
+                                    <p>No user is selected yet...</p>
+                                </div>
                             </div>
                         )}
                     </div>
