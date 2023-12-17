@@ -11,7 +11,7 @@ const UserList = () => {
     const [showClickMessage, setShowClickMessage] = useState(true);
     const [imageLoading, setImageLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const usersPerPage = 10;
+    const usersPerPage = 8;
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -33,7 +33,7 @@ const UserList = () => {
                 setLoading(false);
             }
         };
-        
+
         fetchUsers();
     }, []);
 
@@ -62,7 +62,10 @@ const UserList = () => {
 
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
+        setShowClickMessage(false); 
+        setImageLoading(true);
     };
+    
 
     return (
         <div className="container mt-4 text-white">
@@ -106,17 +109,18 @@ const UserList = () => {
                                 </li>
                             ))}
                         </ul>
-                       {/* Pagination */}
-<nav className="mt-3 mx-auto">
-    <ul className="pagination">
-        {Array.from({ length: Math.ceil(users.length / usersPerPage) }).map((_, index) => (
-            <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                <button className="page-link" onClick={() => paginate(index + 1)}>{index + 1}</button>
-            </li>
-        ))}
-    </ul>
-</nav>
-
+                        {/* Pagination */}
+                        <div className='container text-center'>
+                        <nav className="mt-3 mx-auto ">
+                            <ul className="pagination ">
+                                {Array.from({ length: Math.ceil(users.length / usersPerPage) }).map((_, index) => (
+                                    <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                        <button className="page-link" onClick={() => paginate(index + 1)}>{index + 1}</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                        </div>
                     </div>
                     <div className="col-md-6 text-center">
                         {selectedUser ? (
