@@ -60,12 +60,22 @@ const UserList = () => {
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
+    // Pagination, Prev And Next Button. (plus fixed 5 buttons only.).
+    const totalButtons = 5;
+    const totalPages = Math.ceil(users.length / usersPerPage);
+
+    const startPage = Math.max(1, currentPage - Math.floor(totalButtons / 2));
+    const endPage = Math.min(totalPages, startPage + totalButtons - 1);
+
+    const pages = Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
+
+
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
-        setShowClickMessage(false); 
+        setShowClickMessage(false);
         setImageLoading(true);
     };
-    
+
 
     return (
         <div className="container mt-4 text-white">
@@ -109,18 +119,26 @@ const UserList = () => {
                                 </li>
                             ))}
                         </ul>
-                        {/* Pagination */}
-                        <div className='container text-center'>
-                        <nav className="mt-3 mx-auto ">
-                            <ul className="pagination ">
-                                {Array.from({ length: Math.ceil(users.length / usersPerPage) }).map((_, index) => (
-                                    <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                                        <button className="page-link" onClick={() => paginate(index + 1)}>{index + 1}</button>
+
+                        {/* Pagination Start Here*/}
+                        <nav className="mt-3 d-flex justify-content-center">
+                            <ul className="pagination">
+                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                    <button className="page-link" onClick={() => paginate(currentPage - 1)}>&laquo; Previous</button>
+                                </li>
+                                {pages.map((page) => (
+                                    <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
+                                        <button className="page-link" onClick={() => paginate(page)}>{page}</button>
                                     </li>
                                 ))}
+                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                    <button className="page-link" onClick={() => paginate(currentPage + 1)}>Next &raquo;</button>
+                                </li>
                             </ul>
                         </nav>
-                        </div>
+
+
+
                     </div>
                     <div className="col-md-6 text-center">
                         {selectedUser ? (
